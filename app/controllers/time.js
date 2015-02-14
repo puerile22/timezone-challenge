@@ -17,7 +17,7 @@ exports.getTime = function(req, res) {
     if (err) {
       res.status(500);
       res.json({
-        data: 'Error occured: ' + err 
+        error: 'Error occured: ' + err 
       })
     } else if (data.length) {
       data[0].time = new Date(data[0].time.getTime() + 3600000 * req.params.timezone);
@@ -26,7 +26,7 @@ exports.getTime = function(req, res) {
       })
     } else {
       res.json({
-        data: 'Time: ' + req.params.id + ' not found'
+        error: 'Time: ' + req.params.id + ' not found'
       })
     }
   });
@@ -39,7 +39,7 @@ exports.createTime = function(req, res) {
       if (err) {
         res.status(500);
         res.json({
-          data: 'Error occured: ' + err 
+          error: 'Error occured: ' + err 
         })
       } else {
         res.json({
@@ -52,7 +52,7 @@ exports.createTime = function(req, res) {
       if (err) {
         res.status(500);
         res.json({
-          data: 'Error occured: ' + err 
+          error: 'Error occured: ' + err 
         })
       } else {
         res.json({
@@ -68,7 +68,7 @@ exports.deleteTime = function(req, res) {
     if (err) {
       res.status(500);
       res.json({
-        data: 'Error occured: ' +err
+        error: 'Error occured: ' +err
       })
     } else {
       res.json({
