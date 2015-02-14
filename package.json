@@ -1,0 +1,9 @@
+{
+  "name": "answerbook-timezone-challenge",
+  "version": "0.0.1",
+  "description": "answerbook timezone challenge",
+  "dependencies": {
+    "mongodb": "^1.4.30",
+    "restify": "^2.8.5"
+  }
+}
