@@ -8,18 +8,19 @@ db.once('open', function() {
 var timeSchema = mongoose.Schema({
   id: Number,
   time: Date,
-  UTCtime: String
+  UTCtime: String,
 });
 var Time = mongoose.model('Time', timeSchema);
-exports.getTime = function(req, res, next) {
-  Time.find({id: req.params.id}, function(err, data) {
-    console.log(data);
+
+exports.getTime = function(req, res) {
+  Time.find({id: req.params.id}, {id:1, time:1, UTCtime:1, _id:0}, function(err, data) {
     if (err) {
       res.status(500);
       res.json({
         data: 'Error occured: ' + err 
       })
     } else if (data.length) {
+      data[0].time = new Date(data[0].time.getTime() + 3600000 * req.params.timezone);
       res.json({
         data: data
       })
@@ -30,25 +31,39 @@ exports.getTime = function(req, res, next) {
     }
   });
 };
-exports.createTime = function(req, res, next) {
-  var time = new Time();
-  time.id = req.params.id;
-  time.time = new Date();
-  time.UTCtime = req.params.UTCtime || "";
-  time.save(function(err, data) {
-    if (err) {
-      res.status(500);
-      res.json({
-        data: 'Error occured: ' + err 
-      })
-    } else {
-      res.json({
-        data: data
-      })
-    }
-  });
+
+exports.createTime = function(req, res) {
+  if (req.params.UTCtime) {
+    Time.findOneAndUpdate({id: req.params.id},{time: Date(), UTCtime: req.params.UTCtime}, {upsert: true}, 
+    function(err, data) {
+      if (err) {
+        res.status(500);
+        res.json({
+          data: 'Error occured: ' + err 
+        })
+      } else {
+        res.json({
+          data: data
+        })
+      }
+    });
+  } else {
+    Time.findOneAndUpdate({id: req.params.id},{time: Date()}, {upsert: true}, function(err, data) {
+      if (err) {
+        res.status(500);
+        res.json({
+          data: 'Error occured: ' + err 
+        })
+      } else {
+        res.json({
+          data: data
+        })
+      }
+    });
+  }
 };
-exports.deleteTime = function(req, res, next) {
+
+exports.deleteTime = function(req, res) {
   Time.remove({id: req.params.id}, function(err, data) {
     if (err) {
       res.status(500);
